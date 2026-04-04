@@ -1,117 +1,154 @@
-import { useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  Paper,
-  TextField,
-  Typography,
-  Divider,
-  InputAdornment,
-  IconButton,
-} from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { CampoSenha } from "@/components/CampoSenha";
+import { maskTelefone, maskCPF, validarCPF } from "@/utils/formatters";
+import { Box, Button, Container, Paper, TextField, Typography, Divider } from "@mui/material";
+
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-
-function CampoSenha({
-  label,
-  value,
-  onChange,
-  onBlur,
-  onFocus,
-  error,
-  helperText,
-}: {
-  label: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: React.FocusEventHandler<HTMLInputElement>;
-  onFocus?: React.FocusEventHandler<HTMLInputElement>;
-  error?: boolean;
-  helperText?: string;
-}) {
-  // A memória de "mostrar/ocultar" fica DENTRO do componente.
-  // Cada campo de senha criado terá o seu próprio olhinho independente!
-  const [mostrar, setMostrar] = useState(false);
-
-  return (
-    <TextField
-      label={label}
-      type={mostrar ? "text" : "password"}
-      required
-      fullWidth
-      size="small"
-      value={value}
-      onChange={onChange}
-      onBlur={onBlur}
-      onFocus={onFocus}
-      error={error}
-      helperText={helperText}
-      slotProps={{
-        input: {
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton onClick={() => setMostrar(!mostrar)} edge="end">
-                {mostrar ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        },
-      }}
-    />
-  );
-}
 
 interface Props {
   setEtapa: (etapa: "selecao" | "estagiario" | "empresa") => void;
 }
 
+// O "RG" dos nossos dados do formulário
+interface EstagiarioData {
+  nome: string;
+  cpf: string;
+  telefone: string;
+  email: string;
+  senha: string;
+  confirmarSenha: string;
+}
+
 export default function FormEstagiario({ setEtapa }: Props) {
-  const [senha, setSenha] = useState("");
-  const [confirmarSenha, setConfirmarSenha] = useState("");
-  const [confirmacaoTocada, setConfirmacaoTocada] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    control,
+    trigger,
+    formState: { errors },
+  } = useForm<EstagiarioData>({
+    mode: "onTouched",
+  });
+
+  const onSubmit = (dados: EstagiarioData) => {
+    console.log("Sucesso!O RHF empacotou tudo", dados);
+    //Axios entra aqui
+  };
+
+  const senhaAtual = useWatch({ control, name: "senha" }) || "";
+  const confirmaSenhaAtual = useWatch({ control, name: "confirmarSenha" }) || "";
+
+  useEffect(() => {
+    // Se o usuário já começou a digitar algo na confirmação,
+    // nós forçamos o RHF a reavaliar se as senhas continuam iguais.
+    if (getValues("confirmarSenha")) {
+      trigger("confirmarSenha");
+    }
+  }, [senhaAtual, trigger, getValues]);
+
   const regrasSenha = [
-    { id: 1, texto: "Mínimo de 8 caracteres", valido: senha.length >= 8 },
-    { id: 2, texto: "Pelo menos uma letra maiúscula", valido: /[A-Z]/.test(senha) },
-    { id: 3, texto: "Pelo menos um número", valido: /\d/.test(senha) },
-    { id: 4, texto: "Pelo menos um caractere especial (!@#$%)", valido: /[!@#$%^&*(),.?":{}|<>]/.test(senha) },
+    { id: 1, texto: "Mínimo de 8 caracteres", valido: senhaAtual.length >= 8 },
+    { id: 2, texto: "Pelo menos uma letra maiúscula", valido: /[A-Z]/.test(senhaAtual) },
+    { id: 3, texto: "Pelo menos um número", valido: /\d/.test(senhaAtual) },
+    { id: 4, texto: "Pelo menos um caractere especial (!@#$%)", valido: /[!@#$%^&*(),.?":{}|<>]/.test(senhaAtual) },
   ];
   const senhaValida = regrasSenha.every((regra) => regra.valido);
-  const senhasConferem = senha === confirmarSenha && senha.length > 0;
-  const erroConfirmacao = confirmacaoTocada && senha !== confirmarSenha && confirmarSenha.length > 0;
+  const senhasConferem = senhaAtual === confirmaSenhaAtual && senhaAtual.length > 0;
+
   return (
     <Container maxWidth="xs">
       <Paper elevation={3} sx={{ p: 4, display: "flex", flexDirection: "column" }}>
         <Typography component="h1" variant="h6" align="center" sx={{ fontWeight: "bold", mb: 1 }}>
           CADASTRO DE ESTAGIÁRIO
         </Typography>
-        <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+
+        <Box
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
           <Divider sx={{ my: 0.5 }}>
             <Typography variant="caption" color="text.secondary">
               Dados Pessoais
             </Typography>
           </Divider>
 
-          <TextField label="Nome completo" required fullWidth size="small" />
-          <TextField label="CPF" required fullWidth size="small" />
-          <TextField label="Telefone" required fullWidth size="small" />
-          <TextField label="E-mail" type="email" required fullWidth size="small" />
+          <TextField
+            label="Nome completo"
+            size="small"
+            {...register("nome", {
+              required: "O nome é obrigatório",
+              pattern: {
+                value: /^[a-zA-ZÀ-ÿ\s]+$/,
+                message: "O nome não pode conter números",
+              },
+            })}
+            slotProps={{
+              htmlInput: {
+                maxLength: 100,
+              },
+            }}
+            error={!!errors.nome}
+            helperText={errors.nome?.message as string}
+          />
 
-          <CampoSenha label="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} />
+          <TextField
+            label="CPF"
+            size="small"
+            {...register("cpf", {
+              required: "O CPF é obrigatório",
+              validate: (value) => validarCPF(value) || "Este CPF não é válido", // Usa o algoritmo!
+              onChange: (e) => {
+                e.target.value = maskCPF(e.target.value);
+              }, // Aplica a máscara enquanto digita
+            })}
+            error={!!errors.cpf}
+            helperText={errors.cpf?.message as string}
+          />
+
+          <TextField
+            label="Telefone"
+            size="small"
+            {...register("telefone", {
+              required: "Telefone é obrigatório",
+              minLength: { value: 14, message: "Digite o telefone completo" },
+              onChange: (e) => {
+                e.target.value = maskTelefone(e.target.value);
+              },
+            })}
+            error={!!errors.telefone}
+            helperText={errors.telefone?.message as string}
+          />
+
+          <TextField
+            label="E-mail"
+            type="email"
+            size="small"
+            {...register("email", {
+              required: "E-mail obrigatório",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Digite um e-mail válido (ex: seu@email.com)",
+              },
+            })}
+            error={!!errors.email}
+            helperText={errors.email?.message as string}
+          />
+
+          <CampoSenha label="Senha" {...register("senha", { required: "Crie uma senha" })} />
 
           <CampoSenha
             label="Confirme sua senha"
-            value={confirmarSenha}
-            onChange={(e) => setConfirmarSenha(e.target.value)}
-            onBlur={() => setConfirmacaoTocada(true)}
-            error={erroConfirmacao} // Fica vermelho se for true
-            onFocus={() => setConfirmacaoTocada(false)} // Clicou de volta no campo? Esquece que ele foi tocado e esconde o erro!
-            helperText={erroConfirmacao ? "As senhas não conferem." : ""} // A mensagem em vermelho
+            {...register("confirmarSenha", {
+              validate: (value) => value === getValues("senha") || "As senhas não conferem", // Regra direta no RHF!
+            })}
+            error={!!errors.confirmarSenha}
+            helperText={errors.confirmarSenha?.message as string}
           />
 
-          {/* CHECKLIST */}
+          {/* CHECKLIST VISUAL */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, px: 1 }}>
             {regrasSenha.map((regra) => (
               <Typography
@@ -133,9 +170,15 @@ export default function FormEstagiario({ setEtapa }: Props) {
             ))}
           </Box>
 
-          <Button variant="contained" color="primary" sx={{ mt: 1 }} disabled={!senhaValida || !senhasConferem}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{ mt: 1 }}
+            disabled={!senhaValida || !senhasConferem}>
             Cadastrar
           </Button>
+
           <Button variant="outlined" color="inherit" onClick={() => setEtapa("selecao")}>
             Cancelar
           </Button>
