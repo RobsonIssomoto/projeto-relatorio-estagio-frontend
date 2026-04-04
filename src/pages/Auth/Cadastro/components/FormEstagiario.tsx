@@ -3,7 +3,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { CampoSenha } from "@/components/CampoSenha";
 import { maskTelefone, maskCPF, validarCPF } from "@/utils/formatters";
 import { Box, Button, Container, Paper, TextField, Typography, Divider } from "@mui/material";
-
+import { api } from "@/services/api";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
@@ -33,9 +33,30 @@ export default function FormEstagiario({ setEtapa }: Props) {
     mode: "onTouched",
   });
 
-  const onSubmit = (dados: EstagiarioData) => {
-    console.log("Sucesso!O RHF empacotou tudo", dados);
-    //Axios entra aqui
+  const onSubmit = async (dados: EstagiarioData) => {
+    try {
+      console.log("Sucesso!O RHF empacotou tudo", dados);
+
+      const payloadParaOBackend = {
+        nome: dados.nome,
+        cpf: dados.cpf,
+        telefone: dados.telefone,
+        email: dados.email,
+        senhaEmTextoPlano: dados.senha,
+        perfil: "ESTAGIARIO",
+      };
+
+      console.log("Enviando para o Node:", payloadParaOBackend);
+
+      //Axios entra aqui
+      const resposta = await api.post("/api/v1/usuarios", payloadParaOBackend);
+
+      console.log("Servidor respondeu com sucesso", resposta.data);
+      alert("Cadastro realizado com sucesso");
+    } catch (erro) {
+      console.error("Erro de requisição", erro);
+      alert("Ocorreu um erro ao cadastrar");
+    }
   };
 
   const senhaAtual = useWatch({ control, name: "senha" }) || "";
@@ -43,7 +64,7 @@ export default function FormEstagiario({ setEtapa }: Props) {
 
   useEffect(() => {
     // Se o usuário já começou a digitar algo na confirmação,
-    // nós forçamos o RHF a reavaliar se as senhas continuam iguais.
+    // força o RHF a reavaliar se as senhas continuam iguais.
     if (getValues("confirmarSenha")) {
       trigger("confirmarSenha");
     }

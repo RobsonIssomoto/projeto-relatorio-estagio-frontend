@@ -3,6 +3,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { CampoSenha } from "@/components/CampoSenha";
 import { maskTelefone, maskCNPJ, validarCNPJ } from "@/utils/formatters";
 import { Box, Button, Container, Paper, TextField, Typography, Divider } from "@mui/material";
+import { api } from "@/services/api";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
@@ -39,9 +40,29 @@ export default function FormEmpresa({ setEtapa }: Props) {
     mode: "onTouched",
   });
 
-  const onSubmit = (dados: EmpresaData) => {
-    console.log("Sucesso! Empresa validada:", dados);
-    // Axios entra aqui
+  const onSubmit = async (dados: EmpresaData) => {
+    try {
+      const payloadParaOBackend = {
+        razaoSocial: dados.razaoSocial,
+        cnpj: dados.cnpj,
+        responsavel: dados.nomeRepresentante,
+        telefone: dados.telefone,
+        email: dados.email,
+        senhaEmTextoPlano: dados.senha,
+        perfil: "REPRESENTANTE",
+      };
+
+      console.log("Enviando para o Node:", payloadParaOBackend);
+
+      // Axios entra aqui
+      const resposta = await api.post("/api/v1/usuarios", payloadParaOBackend);
+
+      console.log("Servidor respondeu com sucesso", resposta.data);
+      alert("Cadastro realizado com sucesso");
+    } catch (erro) {
+      console.error("Erro de requisição", erro);
+      alert("Ocorreu um erro ao cadastrar");
+    }
   };
 
   // Lógica do Checklist de Senha
@@ -50,7 +71,7 @@ export default function FormEmpresa({ setEtapa }: Props) {
 
   useEffect(() => {
     // Se o usuário já começou a digitar algo na confirmação,
-    // nós forçamos o RHF a reavaliar se as senhas continuam iguais.
+    // força o RHF a reavaliar se as senhas continuam iguais.
     if (getValues("confirmarSenha")) {
       trigger("confirmarSenha");
     }
