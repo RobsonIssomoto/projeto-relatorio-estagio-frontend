@@ -4,6 +4,7 @@ import { CampoSenha } from "@/components/CampoSenha";
 import { maskTelefone, maskCPF, validarCPF } from "@/utils/formatters";
 import { Box, Button, Container, Paper, TextField, Typography, Divider } from "@mui/material";
 import { api } from "@/services/api";
+
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 

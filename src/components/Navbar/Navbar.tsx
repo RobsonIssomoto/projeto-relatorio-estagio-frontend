@@ -9,7 +9,9 @@ import Button from "@mui/material/Button";
 import MenuIcon from "@mui/icons-material/Menu";
 import DrawerContent from "./DrawerContent";
 
-// 1. Importamos a nossa lista de itens de navegação
+import { Link as RouterLink } from "react-router-dom";
+
+// 1. Importação da lista de itens de navegação
 import { NAV_ITEMS } from "../../utils/navigation";
 
 const drawerWidth = 200;
@@ -25,7 +27,7 @@ export default function Navbar() {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
 
-      {/* 2. Aqui está a magia! Usamos a cor 'fatec' que criámos no tema */}
+      {/*  Utilizando cor 'fatec' criada no tema */}
       <AppBar component="nav" color="fatec">
         <Toolbar
           disableGutters
@@ -76,7 +78,7 @@ export default function Navbar() {
               />
             </Box>
 
-            {/* Menu desktop iterando sobre a nossa constante */}
+            {/* Menu desktop iterando sobre a constante */}
             <Box
               sx={{
                 display: { xs: "none", md: "flex" },
@@ -110,12 +112,14 @@ export default function Navbar() {
               gap: 1.5,
             }}>
             <Button
+              component={RouterLink}
+              to="/cadastro"
               variant="contained"
               sx={{
                 backgroundColor: "#fff",
                 color: "fatec.main",
                 "&:hover": {
-                  backgroundColor: "#f0f0f0", // Um cinza muito claro para o hover
+                  backgroundColor: "#f0f0f0",
                   color: "fatec.dark",
                 },
               }}>
@@ -123,6 +127,8 @@ export default function Navbar() {
             </Button>
 
             <Button
+              component={RouterLink}
+              to="/login"
               variant="outlined"
               sx={{
                 borderColor: "white",
