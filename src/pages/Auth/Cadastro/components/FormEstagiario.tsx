@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { CampoSenha } from "@/components/CampoSenha";
 import { maskTelefone, maskCPF, validarCPF } from "@/utils/formatters";
 import { Box, Button, Container, Paper, TextField, Typography, Divider } from "@mui/material";
@@ -23,11 +24,13 @@ interface EstagiarioData {
 }
 
 export default function FormEstagiario({ setEtapa }: Props) {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     getValues,
     control,
+    reset,
     trigger,
     formState: { errors },
   } = useForm<EstagiarioData>({
@@ -54,6 +57,8 @@ export default function FormEstagiario({ setEtapa }: Props) {
 
       console.log("Servidor respondeu com sucesso", resposta.data);
       alert("Cadastro realizado com sucesso");
+      reset(); // Limpa todos os campos do formulário
+      navigate("/login"); // Direciona o usuário para a tela de login
     } catch (erro) {
       console.error("Erro de requisição", erro);
       alert("Ocorreu um erro ao cadastrar");

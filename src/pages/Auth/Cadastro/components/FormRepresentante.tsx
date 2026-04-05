@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { CampoSenha } from "@/components/CampoSenha";
 import { maskTelefone, maskCNPJ, validarCNPJ } from "@/utils/formatters";
 import { Box, Button, Container, Paper, TextField, Typography, Divider } from "@mui/material";
@@ -28,12 +29,15 @@ interface EmpresaData {
 }
 
 export default function FormEmpresa({ setEtapa }: Props) {
+  const navigate = useNavigate();
+
   // Configurando o RHF
   const {
     register,
     handleSubmit,
     getValues,
     control,
+    reset,
     trigger,
     formState: { errors },
   } = useForm<EmpresaData>({
@@ -59,6 +63,8 @@ export default function FormEmpresa({ setEtapa }: Props) {
 
       console.log("Servidor respondeu com sucesso", resposta.data);
       alert("Cadastro realizado com sucesso");
+      reset(); // Limpa todos os campos do formulário
+      navigate("/login"); // Manda o usuário para a tela de login
     } catch (erro) {
       console.error("Erro de requisição", erro);
       alert("Ocorreu um erro ao cadastrar");

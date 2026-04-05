@@ -17,12 +17,7 @@ export default function DrawerContent({ onClose }: Props) {
     <Box onClick={onClose} sx={{ textAlign: "center" }}>
       {/* Logo */}
       <Box sx={{ my: 2 }}>
-        <Box
-          component="img"
-          src="/fatec_atibaia_logo.png"
-          alt="logo"
-          sx={{ height: 40 }}
-        />
+        <Box component="img" src="/fatec_atibaia_logo.png" alt="logo" sx={{ height: 40 }} />
       </Box>
 
       <Divider />
@@ -43,8 +38,7 @@ export default function DrawerContent({ onClose }: Props) {
       {/* Ações */}
       <List>
         <ListItem disablePadding>
-          <ListItemButton
-            sx={{ justifyContent: "center", color: "fatec.main" }}>
+          <ListItemButton sx={{ justifyContent: "center", color: "fatec.main" }}>
             <ListItemText primary="Cadastrar" />
           </ListItemButton>
         </ListItem>
