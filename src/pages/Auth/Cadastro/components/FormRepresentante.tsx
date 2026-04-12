@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { CampoSenha } from "@/components/CampoSenha";
+import { CampoSenha } from "@/components/Common/CampoSenha";
 import { maskTelefone, maskCNPJ, validarCNPJ } from "@/utils/formatters";
 import { Box, Button, Container, Paper, TextField, Typography, Divider } from "@mui/material";
 import { api } from "@/services/api";

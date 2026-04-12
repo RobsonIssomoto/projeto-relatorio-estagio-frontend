@@ -7,9 +7,10 @@ import { theme } from "./theme/theme";
 // Componentes
 import Navbar from "./components/Navbar/Navbar";
 import Cadastro from "./pages/Auth/Cadastro/components/Cadastro";
+import TelaRegistroAtividade from "./pages/Dashboard/Estagiario/Atividades/TelaRegistroAtividade";
+import DashboardEstagiario from "./pages/Dashboard/Estagiario/DashboardEstagiario";
 import { Login } from "./pages/Auth/Login/Login";
 import { DashboardLayout } from "./layouts/DashboardLayouts";
-// Adicionada a importação import DashboardEstagiario from "./pages/Dashboard/Estagiario/DashboardEstagiario";
 
 /**
  * Esse é o "Molde" para as páginas públicas (Login e Cadastro).
@@ -54,7 +55,8 @@ export default function App() {
           {/* ROTAS PRIVADAS (Com Menu Lateral / Sidebar) */}
           {/* ========================================== */}
           <Route element={<DashboardLayout />}>
-            <Route path="/dashboard/estagiario" element={<h1>Painel Base do Estagiário em construção 🚧</h1>} />
+            <Route path="/dashboard/estagiario" element={<DashboardEstagiario />} />
+            <Route path="/dashboard/atividades/nova" element={<TelaRegistroAtividade />} />
             <Route path="/dashboard/empresa" element={<h1>Painel Base da Empresa em construção 🚧</h1>} />
           </Route>
         </Routes>

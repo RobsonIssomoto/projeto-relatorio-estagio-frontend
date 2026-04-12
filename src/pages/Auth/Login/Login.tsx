@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { CampoSenha } from "@/components/CampoSenha";
+import { CampoSenha } from "@/components/Common/CampoSenha";
 import { api } from "@/services/api";
 
 // Componentes do Material UI
