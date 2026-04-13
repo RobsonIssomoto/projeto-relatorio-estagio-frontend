@@ -12,7 +12,7 @@ interface LoginData {
   senha: string;
 }
 
-export function Login() {
+export const Login = () => {
   const {
     register,
     handleSubmit,
@@ -109,4 +109,4 @@ export function Login() {
       </Paper>
     </Container>
   );
-}
+};

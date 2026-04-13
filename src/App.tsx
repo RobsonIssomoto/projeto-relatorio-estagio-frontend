@@ -1,17 +1,21 @@
+// 1. Bibliotecas Externas
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import { theme } from "./theme/theme";
+import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 
-// Componentes
-import Navbar from "./components/Navbar/Navbar";
-import Cadastro from "./pages/Auth/Cadastro/components/Cadastro";
-import TelaRegistroAtividade from "./pages/Dashboard/Estagiario/Atividades/TelaRegistroAtividade";
-import DashboardEstagiario from "./pages/Dashboard/Estagiario/DashboardEstagiario";
-import { Login } from "./pages/Auth/Login/Login";
+// 2. Configurações de Tema e Layouts
+import { theme } from "./theme/theme";
 import { DashboardLayout } from "./layouts/DashboardLayouts";
 
+// 3. Autenticação
+import { Login } from "./pages/Auth/Login/Login";
+import { Cadastro } from "./pages/Auth/Cadastro/components/Cadastro";
+
+// 4. Dashboard e Atividades
+import { DashboardEstagiario } from "./pages/Dashboard/Estagiario/Home/DashboardEstagiario";
+import { TelaRegistroAtividade } from "./pages/Dashboard/Estagiario/Atividades/TelaRegistroAtividade";
+
+// 5. Componentes Globais
+import { Navbar } from "./components/Navbar/Navbar";
 /**
  * Esse é o "Molde" para as páginas públicas (Login e Cadastro).
  * Ele mantém as configurações de espaçamento e centralização
@@ -46,9 +50,9 @@ export default function App() {
           {/* ROTAS PÚBLICAS (Com Navbar e Centralização) */}
           {/* ========================================== */}
           <Route element={<PublicLayout />}>
+            <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
-            <Route path="/" element={<Login />} />
           </Route>
 
           {/* ========================================== */}

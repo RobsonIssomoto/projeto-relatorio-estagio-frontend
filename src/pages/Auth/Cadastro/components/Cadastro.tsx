@@ -3,7 +3,7 @@ import SelecaoPerfil from "./SelecaoPerfil";
 import FormEstagiario from "./FormEstagiario";
 import FormRepresentante from "./FormRepresentante";
 
-export default function Cadastro() {
+export const Cadastro = () => {
   const [etapa, setEtapa] = useState<"selecao" | "estagiario" | "empresa">("selecao");
 
   return (
@@ -15,4 +15,4 @@ export default function Cadastro() {
       {etapa === "empresa" && <FormRepresentante setEtapa={setEtapa} />}
     </>
   );
-}
+};

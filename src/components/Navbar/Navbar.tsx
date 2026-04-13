@@ -16,7 +16,7 @@ import { NAV_ITEMS } from "../../utils/navigation";
 
 const drawerWidth = 200;
 
-export default function Navbar() {
+export const Navbar = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
@@ -158,4 +158,4 @@ export default function Navbar() {
       </Drawer>
     </Box>
   );
-}
+};

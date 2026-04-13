@@ -62,8 +62,16 @@ export function DashboardLayout() {
       </Drawer>
 
       {/* 3. ÁREA DE CONTEÚDO PRINCIPAL */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: "100%" }}>
-        <Toolbar sx={{ minHeight: 64 }} />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          marginTop: "64px",
+          height: "calc(100vh - 64px)",
+          overflowY: "auto",
+          p: 4,
+          backgroundColor: "#f5f7fa",
+        }}>
         <Outlet />
       </Box>
     </Box>
