@@ -75,7 +75,7 @@ export const DashboardEstagiario = () => {
     <Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5" fontWeight="bold" color="text.primary">
-          Visão Geral
+          Visão Geral - DOCKER
         </Typography>
       </Box>
 
