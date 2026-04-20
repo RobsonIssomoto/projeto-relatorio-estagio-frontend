@@ -6,7 +6,7 @@ import AlertaFeedback from "../../../../components/Common/AlertaFeedBack";
 // 1. Contrato do TypeScript para o Formulário
 interface AtividadeFormData {
   titulo: string;
-  data: string;
+  dataAtividade: string;
   horas: number;
   tecnologias: string[];
   descricao: string;
@@ -26,7 +26,7 @@ export default function FormularioAtividade() {
   } = useForm<AtividadeFormData>({
     defaultValues: {
       titulo: "",
-      data: "",
+      dataAtividade: "",
       horas: undefined,
       tecnologias: [],
       descricao: "",
@@ -75,9 +75,9 @@ export default function FormularioAtividade() {
             fullWidth
             size="small"
             slotProps={{ inputLabel: { shrink: true } }}
-            {...register("data", { required: "A data é obrigatória" })}
-            error={!!errors.data}
-            helperText={errors.data?.message}
+            {...register("dataAtividade", { required: "A data é obrigatória" })}
+            error={!!errors.dataAtividade}
+            helperText={errors.dataAtividade?.message}
           />
           <TextField
             label="Horas Trabalhadas"
