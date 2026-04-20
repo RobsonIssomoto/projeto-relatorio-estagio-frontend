@@ -1,6 +1,9 @@
 import { useState } from "react";
-import { Box, Button, Paper, TextField, Typography, Autocomplete, Chip } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
+import { isAxiosError } from "axios";
+import { Box, Button, Paper, TextField, Typography, Autocomplete, Chip } from "@mui/material";
+import { api } from "../../../../services/api";
 import AlertaFeedback from "../../../../components/Common/AlertaFeedBack";
 
 // 1. Contrato do TypeScript para o Formulário
@@ -13,8 +16,13 @@ interface AtividadeFormData {
 }
 
 export default function FormularioAtividade() {
+  const navigate = useNavigate();
+
+  // Estado para controlar se o botão está girando
+  const [isLoading, setLoading] = useState(false);
+
   // Estado do Alerta
-  const [alertaOpen, setAlertaOpen] = useState(false);
+  const [alerta, setAlerta] = useState({ open: false, mensagem: "", tipo: "success" as "success" | "error" });
 
   // 2. Configuração do React Hook Form
   const {
@@ -34,12 +42,47 @@ export default function FormularioAtividade() {
   });
 
   // 3. Função disparada apenas se o formulário passar nas validações
-  const onSubmit = (dados: AtividadeFormData) => {
-    console.log("🚀 Dados prontos para a API:", dados);
+  const onSubmit = async (dados: AtividadeFormData) => {
+    //console.log("🚀 Dados prontos para a API:", dados);
 
-    // Abre o seu alerta de sucesso!
-    setAlertaOpen(true);
+    setLoading(true);
 
+    try {
+      // Traduz de "dados.data" para "dados.dataAtividade" que o Node espera
+      const pacoteParaOBanco = {
+        titulo: dados.titulo,
+        dataAtividade: dados.dataAtividade, // nome exato que está na interface do formulário
+        horas: dados.horas,
+        tecnologias: dados.tecnologias,
+        descricao: dados.descricao,
+        alunoId: "69e5a714881701b1b1318e8d", // O ID falso no Postman
+      };
+
+      // Dispara para o Back-end
+      await api.post("/api/v1/atividades", pacoteParaOBanco);
+
+      // Sucesso! Mostra o AlertaFeedback verde
+      setAlerta({ open: true, mensagem: "Atividade salva com sucesso!", tipo: "success" });
+      reset();
+
+      setTimeout(() => navigate("/painel"), 2000);
+    } catch (error: unknown) {
+      console.error(error);
+
+      // Mensagem padrão caso a internet caia totalmente
+      let mensagemErro = "Erro interno de conexão.";
+
+      // TYPE GUARD: Confirma com segurança que o erro veio do Axios
+      if (isAxiosError(error)) {
+        // Pega a mensagem exata que o seu Controller do Node enviou ({ erro: "..." })
+        mensagemErro = error.response?.data?.erro || "Erro na comunicação com o servidor.";
+      }
+
+      // Aciona o alerta vermelho com a mensagem correta
+      setAlerta({ open: true, mensagem: mensagemErro, tipo: "error" });
+    } finally {
+      setLoading(false);
+    }
     // Limpa os campos após enviar
     reset();
   };
@@ -153,8 +196,13 @@ export default function FormularioAtividade() {
             justifyContent: { sm: "flex-end" },
           }}>
           {/* type="submit" para disparar o React Hook Form */}
-          <Button type="submit" variant="contained" color="primary" sx={{ width: { xs: "100%", sm: "120px" } }}>
-            Salvar
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={isLoading} // <--  Desliga o botão se estiver carregando
+            sx={{ width: { xs: "100%", sm: "120px" } }}>
+            {isLoading ? "Salvando..." : "Salvar"} {/* <-- Muda o texto */}
           </Button>
 
           <Button variant="outlined" color="inherit" sx={{ width: { xs: "100%", sm: "120px" } }}>
@@ -165,10 +213,10 @@ export default function FormularioAtividade() {
 
       {/* 5. AlertaFeedback */}
       <AlertaFeedback
-        open={alertaOpen}
-        mensagem="Atividade registrada com sucesso!"
-        tipo="success"
-        onClose={() => setAlertaOpen(false)}
+        open={alerta.open}
+        mensagem={alerta.mensagem}
+        tipo={alerta.tipo}
+        onClose={() => setAlerta({ ...alerta, open: false })}
       />
     </Paper>
   );
