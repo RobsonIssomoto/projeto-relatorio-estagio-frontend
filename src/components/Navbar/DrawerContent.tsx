@@ -5,7 +5,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 
-// Importamos a mesma lista aqui!
+// Importa a mesma lista aqui!
 import { NAV_ITEMS } from "../../utils/navigation";
 
 interface Props {

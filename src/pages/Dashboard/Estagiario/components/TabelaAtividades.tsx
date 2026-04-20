@@ -1,112 +1,91 @@
-import { useMemo } from "react";
-import { Box, Chip, IconButton, Stack } from "@mui/material";
+import { useState, useEffect, useMemo } from "react";
+import { Box, IconButton, Stack } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { ptBR } from "@mui/x-data-grid/locales";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { api } from "../../../../services/api";
 
-// 1. Interface de dados
 interface Atividade {
-  id: number;
-  descricaoAtividade: string;
-  dtAtividade: string;
-  qtdHoras: number;
-  pendencias: string;
+  _id: string;
+  titulo: string;
+  dataAtividade: string;
+  horas: number;
 }
 
-// 2. Os dados (Mock)
-const listaAtividades: Atividade[] = [
-  {
-    id: 1,
-    descricaoAtividade: "Planejamento do frontend",
-    dtAtividade: "01/04/2026",
-    qtdHoras: 20,
-    pendencias: "aprovado",
-  },
-  {
-    id: 2,
-    descricaoAtividade: "Desenvolvimento do frontend",
-    dtAtividade: "10/04/2026",
-    qtdHoras: 30,
-    pendencias: "pendente",
-  },
-  { id: 3, descricaoAtividade: "Testes do frontend", dtAtividade: "20/04/2026", qtdHoras: 15, pendencias: "reprovado" },
-];
-
-// 3. Função de cor do Status
-const getCorStatus = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "aprovado":
-      return "success";
-    case "pendente":
-      return "warning";
-    case "reprovado":
-      return "error";
-    default:
-      return "default";
-  }
-};
-
 export const TabelaAtividades = () => {
-  // 1. Funções de Mock
-  const handleEdit = (id: number) => {
-    alert(`Abrindo modal para visualizar a atividade ID: ${id}`);
-  };
+  const [atividades, setAtividades] = useState<Atividade[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleDelete = (id: number) => {
-    if (window.confirm(`Tem certeza que deseja deletar a atividade ${id}?`)) {
-      alert(`Atividade ${id} deletada com sucesso! (Simulação)`);
+  // Efeito que busca os dados no MongoDB ao abrir a tela
+  useEffect(() => {
+    const buscarAtividades = async () => {
+      try {
+        // ID do usuário de teste (o mesmo que usamos no Postman)
+        const resposta = await api.get("/api/v1/atividades/aluno/69e5a714881701b1b1318e8d");
+        setAtividades(resposta.data);
+      } catch (error) {
+        console.error("Erro ao buscar atividades:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    buscarAtividades();
+  }, []);
+
+  // Função para deletar uma atividade
+  const handleDelete = async (id: string) => {
+    // 1. Confirmação de segurança (UX básica para evitar cliques acidentais)
+    const confirmar = window.confirm("Tem certeza que deseja excluir esta atividade?");
+    if (!confirmar) return;
+
+    try {
+      // 2. Avisa a Tabela que está carregando
+      setIsLoading(true);
+
+      // 3. Pede para a API deletar no MongoDB
+      await api.delete(`/api/v1/atividades/${id}`);
+
+      // 4. Atualiza a tabela na hora, SEM DAR F5!
+      // Ele pega a lista atual e filtra, removendo o ID que acabamos de apagar
+      setAtividades((listaAnterior) => listaAnterior.filter((ativ) => ativ._id !== id));
+    } catch (error) {
+      console.error("Erro ao deletar:", error);
+      alert("Erro ao excluir a atividade.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // 2. Envolvendo as colunas no useMemo para garantir a performance da pesquisa
-  const columns = useMemo<GridColDef[]>(
+  const columns: GridColDef[] = useMemo(
     () => [
-      { field: "descricaoAtividade", headerName: "Descrição", flex: 1, minWidth: 200 },
-      { field: "dtAtividade", headerName: "Data", width: 150, align: "center", headerAlign: "center" },
+      { field: "titulo", headerName: "Título da Atividade", flex: 1, minWidth: 200 },
       {
-        field: "qtdHoras",
-        headerName: "Horas",
-        type: "number",
-        width: 120,
-        align: "center",
-        headerAlign: "center",
-        valueFormatter: (value: number) => (value == null ? "0h" : `${value}h`),
+        field: "dataAtividade",
+        headerName: "Data",
+        width: 130,
+        valueFormatter: (value?: string) => {
+          if (!value) return "";
+          const data = new Date(value);
+          return data.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+        },
       },
-      {
-        field: "pendencias",
-        headerName: "Status",
-        width: 160,
-        align: "center",
-        headerAlign: "center",
-        renderCell: (params: GridRenderCellParams) => (
-          <Chip
-            label={String(params.value).toUpperCase()}
-            color={getCorStatus(String(params.value))}
-            size="small"
-            variant="outlined"
-            sx={{ fontWeight: "bold" }}
-          />
-        ),
-      },
+      { field: "horas", headerName: "Horas", width: 100, align: "center", headerAlign: "center" },
       {
         field: "acoes",
         headerName: "Ações",
-        width: 140,
+        width: 120,
         sortable: false,
-        filterable: false,
-        disableColumnMenu: true,
         align: "center",
         headerAlign: "center",
         renderCell: (params: GridRenderCellParams) => (
           <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" height="100%">
-            {/* 3. Chamada de funções passando o ID da linha! */}
-            <IconButton color="primary" size="small" onClick={() => handleEdit(params.row.id as number)}>
+            <IconButton color="primary" size="small" onClick={() => console.log("Ver:", params.row._id)}>
               <VisibilityIcon fontSize="small" />
             </IconButton>
-
-            <IconButton color="error" size="small" onClick={() => handleDelete(params.row.id as number)}>
+            <IconButton color="error" size="small" onClick={() => handleDelete(params.row._id)}>
               <DeleteIcon fontSize="small" />
             </IconButton>
           </Stack>
@@ -114,27 +93,20 @@ export const TabelaAtividades = () => {
       },
     ],
     [],
-  ); // <--- Os colchetes vazios dizem ao React: "Gere as colunas apenas uma vez"
+  );
 
   return (
     <Box sx={{ height: 400, width: "100%", backgroundColor: "background.paper", borderRadius: 1, boxShadow: 1 }}>
       <DataGrid
-        rows={listaAtividades}
-        columns={columns} // As colunas vêm do useMemo
+        rows={atividades} // <-- AQUI a variável de estado é preenchida pela API
+        columns={columns}
+        getRowId={(row) => row._id} // Ensina o DataGrid a usar o _id do MongoDB
+        loading={isLoading}
         initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
+          pagination: { paginationModel: { page: 0, pageSize: 5 } },
         }}
         pageSizeOptions={[5, 10, 20]}
         disableRowSelectionOnClick
-        showToolbar
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
         localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
       />
     </Box>

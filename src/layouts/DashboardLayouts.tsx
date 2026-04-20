@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Box, Drawer, Toolbar, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 // Ícones apenas dos links principais
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import DescriptionIcon from "@mui/icons-material/Description";
 import HomeIcon from "@mui/icons-material/Home";
 
@@ -14,6 +15,8 @@ const LARGURA_FECHADA = 65;
 
 export function DashboardLayout() {
   const [menuAberto, setMenuAberto] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <Box sx={{ display: "flex", height: "100vh", bgcolor: "#f5f7fa" }}>
@@ -41,9 +44,14 @@ export function DashboardLayout() {
         <Box sx={{ mt: 2 }}>
           <List>
             <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: menuAberto ? "initial" : "center", px: 2.5 }}>
+              <ListItemButton
+                // Fica selecionado se a URL for exatamente essa
+                selected={location.pathname === "/dashboard/estagiario"}
+                // Navega para a rota
+                onClick={() => navigate("/dashboard/estagiario")}
+                sx={{ minHeight: 48, justifyContent: menuAberto ? "initial" : "center", px: 2.5 }}>
                 <ListItemIcon sx={{ minWidth: 0, mr: menuAberto ? 2 : "auto", justifyContent: "center" }}>
-                  <HomeIcon />
+                  <HomeIcon color={location.pathname === "/dashboard/estagiario" ? "primary" : "inherit"} />
                 </ListItemIcon>
                 <ListItemText primary="Início" sx={{ opacity: menuAberto ? 1 : 0 }} />
               </ListItemButton>
@@ -55,6 +63,18 @@ export function DashboardLayout() {
                   <DescriptionIcon />
                 </ListItemIcon>
                 <ListItemText primary="Documentos" sx={{ opacity: menuAberto ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                selected={location.pathname.includes("/dashboard/atividades")}
+                onClick={() => navigate("/dashboard/atividades")}
+                sx={{ minHeight: 48, justifyContent: menuAberto ? "initial" : "center", px: 2.5 }}>
+                <ListItemIcon sx={{ minWidth: 0, mr: menuAberto ? 2 : "auto", justifyContent: "center" }}>
+                  <AssignmentIcon color={location.pathname.includes("/dashboard/atividades") ? "primary" : "inherit"} />
+                </ListItemIcon>
+                <ListItemText primary="Atividades" sx={{ opacity: menuAberto ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           </List>

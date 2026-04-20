@@ -1,5 +1,6 @@
+import { useState, useEffect } from "react";
 import { Box, Typography, Paper, Avatar, Stack } from "@mui/material";
-
+import { api } from "../../../../services/api";
 // Ícones
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
@@ -7,7 +8,12 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { TabelaAtividades } from "../components/TabelaAtividades";
+
+interface AtividadeBanco {
+  _id: string;
+  horas: number;
+  dataAtividade: string;
+}
 
 interface CardMetricaProps {
   titulo: string;
@@ -19,7 +25,7 @@ interface CardMetricaProps {
   tipoTendencia?: "positiva" | "negativa" | "neutra";
 }
 
-// COMPONENTE DO CARD (Estilo DeviasKit / Mantis)
+// COMPONENTE DO CARD
 const CardMetrica = ({ titulo, valor, subtitulo, icone, corIcone, tendencia, tipoTendencia }: CardMetricaProps) => (
   <Paper
     elevation={0} //  Sombra pesada removida para ficar mais "clean"
@@ -71,15 +77,57 @@ const CardMetrica = ({ titulo, valor, subtitulo, icone, corIcone, tendencia, tip
 );
 
 export const DashboardEstagiario = () => {
+  // 1. Estados para guardar as métricas reais
+  const [totalHoras, setTotalHoras] = useState(0);
+  const [totalAtividades, setTotalAtividades] = useState(0);
+  const [atividadesRecentes, setAtividadesRecentes] = useState(0);
+  // 2. Busca os dados no banco assim que o Dashboard abre
+  useEffect(() => {
+    const calcularMetricas = async () => {
+      try {
+        const resposta = await api.get("/api/v1/atividades/aluno/69e5a714881701b1b1318e8d");
+
+        // Tipa a lista para o TS
+        const lista: AtividadeBanco[] = resposta.data;
+
+        // 1. Total de Atividades
+        setTotalAtividades(lista.length);
+
+        // 2. Soma de Horas
+        const somaDasHoras = lista.reduce((acumulador: number, atividade: AtividadeBanco) => {
+          return acumulador + (atividade.horas || 0); // Prevenção caso venha vazio
+        }, 0);
+        setTotalHoras(somaDasHoras);
+
+        // 3. Lógica para "Atividades nesta semana"
+        const dataLimite = new Date();
+        dataLimite.setDate(dataLimite.getDate() - 7); // Volta 7 dias no tempo
+
+        const feitasRecentemente = lista.filter((ativ) => {
+          const dataDaAtividade = new Date(ativ.dataAtividade);
+          return dataDaAtividade >= dataLimite;
+        });
+        setAtividadesRecentes(feitasRecentemente.length);
+      } catch (error) {
+        console.error("Erro ao calcular métricas:", error);
+      }
+    };
+
+    calcularMetricas();
+  }, []);
+
+  // Variável que calcula a porcentagem (Limitada a 100% no máximo)
+  const percentualMeta = Math.min(Math.round((totalHoras / 400) * 100), 100);
+
   return (
     <Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5" fontWeight="bold" color="text.primary">
-          Visão Geral - DOCKER
+          Visão Geral
         </Typography>
       </Box>
 
-      {/* 🚀 A MÁGICA DO CSS GRID PARA NÃO DEIXAR BURACOS */}
+      {/* CSS GRID PARA NÃO DEIXAR BURACOS */}
       <Stack spacing={8}>
         <Box
           sx={{
@@ -93,8 +141,8 @@ export const DashboardEstagiario = () => {
           }}>
           <CardMetrica
             titulo="HORAS CUMPRIDAS"
-            valor="142h"
-            tendencia="35%"
+            valor={`${totalHoras}h`}
+            tendencia={`${percentualMeta}%`} /* CALCULA SOZINHO A PORCENTAGEM */
             tipoTendencia="positiva"
             subtitulo="da meta de 400h"
             icone={<AccessTimeFilledIcon />}
@@ -103,10 +151,10 @@ export const DashboardEstagiario = () => {
 
           <CardMetrica
             titulo="ATIVIDADES ENVIADAS"
-            valor="12"
-            tendencia="+2"
+            valor={totalAtividades}
+            tendencia={`+${atividadesRecentes}`} /* QUANTAS FORAM FEITAS NOS ÚLTIMOS 7 DIAS */
             tipoTendencia="positiva"
-            subtitulo="nesta semana"
+            subtitulo="nos últimos 7 dias"
             icone={<AssignmentTurnedInIcon />}
             corIcone="success"
           />
@@ -137,7 +185,6 @@ export const DashboardEstagiario = () => {
         receber os Gráficos e a Tabela de Atividades!
         =========================================================
       */}
-        <TabelaAtividades />
         <Box
           sx={{
             mt: 3,
