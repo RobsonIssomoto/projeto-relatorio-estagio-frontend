@@ -1,8 +1,6 @@
 import { Box, Button, Fab, Stack, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
-
-// IMPORTANTE: Ajuste o caminho abaixo para onde você salvou o arquivo novo da Tabela
 import { TabelaAtividades } from "../components/TabelaAtividades";
 
 export const Atividade = () => {

@@ -58,15 +58,6 @@ export function DashboardLayout() {
             </ListItem>
 
             <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton sx={{ minHeight: 48, justifyContent: menuAberto ? "initial" : "center", px: 2.5 }}>
-                <ListItemIcon sx={{ minWidth: 0, mr: menuAberto ? 2 : "auto", justifyContent: "center" }}>
-                  <DescriptionIcon />
-                </ListItemIcon>
-                <ListItemText primary="Documentos" sx={{ opacity: menuAberto ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 selected={location.pathname.includes("/dashboard/atividades")}
                 onClick={() => navigate("/dashboard/atividades")}
@@ -78,14 +69,15 @@ export function DashboardLayout() {
               </ListItemButton>
             </ListItem>
 
-            <ListItem disablePadding>
+            <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 selected={location.pathname === "/dashboard/relatorios"}
-                onClick={() => navigate("/dashboard/relatorios")}>
-                <ListItemIcon>
+                onClick={() => navigate("/dashboard/relatorios")}
+                sx={{ minHeight: 48, justifyContent: menuAberto ? "initial" : "center", px: 2.5 }}>
+                <ListItemIcon sx={{ minWidth: 0, mr: menuAberto ? 2 : "auto", justifyContent: "center" }}>
                   <DescriptionIcon color={location.pathname === "/dashboard/relatorios" ? "primary" : "inherit"} />
                 </ListItemIcon>
-                <ListItemText primary="Relatórios" />
+                <ListItemText primary="Relatórios" sx={{ opacity: menuAberto ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           </List>
