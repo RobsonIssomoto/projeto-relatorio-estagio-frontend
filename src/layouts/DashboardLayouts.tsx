@@ -77,6 +77,17 @@ export function DashboardLayout() {
                 <ListItemText primary="Atividades" sx={{ opacity: menuAberto ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton
+                selected={location.pathname === "/dashboard/relatorios"}
+                onClick={() => navigate("/dashboard/relatorios")}>
+                <ListItemIcon>
+                  <DescriptionIcon color={location.pathname === "/dashboard/relatorios" ? "primary" : "inherit"} />
+                </ListItemIcon>
+                <ListItemText primary="Relatórios" />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Box>
       </Drawer>
