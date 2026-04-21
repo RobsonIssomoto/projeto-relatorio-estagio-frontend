@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { isAxiosError } from "axios";
 import { Box, Button, Paper, TextField, Typography, Autocomplete, Chip } from "@mui/material";
@@ -17,7 +17,8 @@ interface AtividadeFormData {
 
 export default function FormularioAtividade() {
   const navigate = useNavigate();
-
+  const { id } = useParams(); // Pega o ':id' da URL (se existir)
+  const [buscandoDados, setBuscandoDados] = useState(!!id);
   // Estado para controlar se o botão está girando
   const [isLoading, setLoading] = useState(false);
 
@@ -41,31 +42,62 @@ export default function FormularioAtividade() {
     },
   });
 
-  // 3. Função disparada apenas se o formulário passar nas validações
-  const onSubmit = async (dados: AtividadeFormData) => {
-    //console.log("🚀 Dados prontos para a API:", dados);
+  // EFEITO: Se tiver um ID na URL, busca no banco e preenche a tela
+  useEffect(() => {
+    if (id) {
+      const buscarAtividade = async () => {
+        try {
+          const resposta = await api.get(`/api/v1/atividades/${id}`);
+          const dadosDoBanco = resposta.data;
 
+          reset({
+            titulo: dadosDoBanco.titulo,
+            dataAtividade: dadosDoBanco.dataAtividade ? dadosDoBanco.dataAtividade.split("T")[0] : "",
+            horas: dadosDoBanco.horas,
+            tecnologias: dadosDoBanco.tecnologias || [],
+            descricao: dadosDoBanco.descricao,
+          });
+        } catch (error) {
+          console.error("Erro ao buscar atividade:", error);
+          setAlerta({ open: true, mensagem: "Erro ao carregar dados da atividade", tipo: "error" });
+        } finally {
+          // NOVO: Independente de dar erro ou sucesso, avisa que parou de buscar!
+          setBuscandoDados(false);
+        }
+      };
+
+      buscarAtividade();
+    }
+  }, [id, reset]); // Roda essa função sempre que o ID mudar
+
+  // 3. Função disparada apenas se o formulário passar nas validações
+
+  const onSubmit = async (dados: AtividadeFormData) => {
     setLoading(true);
 
     try {
-      // Traduz de "dados.data" para "dados.dataAtividade" que o Node espera
       const pacoteParaOBanco = {
         titulo: dados.titulo,
-        dataAtividade: dados.dataAtividade, // nome exato que está na interface do formulário
+        dataAtividade: dados.dataAtividade,
         horas: dados.horas,
         tecnologias: dados.tecnologias,
         descricao: dados.descricao,
-        alunoId: "69e5a714881701b1b1318e8d", // O ID falso no Postman
+        alunoId: "69e5a714881701b1b1318e8d", // Mantemos o mock por enquanto
       };
 
-      // Dispara para o Back-end
-      await api.post("/api/v1/atividades", pacoteParaOBanco);
+      // DECISÃO DO SISTEMA: Editar ou Criar?
+      if (id) {
+        // Se tem ID, é MODO EDIÇÃO (Faz um PUT)
+        await api.put(`/api/v1/atividades/${id}`, pacoteParaOBanco);
+        setAlerta({ open: true, mensagem: "Atividade atualizada com sucesso!", tipo: "success" });
+      } else {
+        // Se NÃO tem ID, é MODO CRIAÇÃO (Faz um POST)
+        await api.post("/api/v1/atividades", pacoteParaOBanco);
+        setAlerta({ open: true, mensagem: "Atividade salva com sucesso!", tipo: "success" });
+      }
 
-      // Sucesso! Mostra o AlertaFeedback verde
-      setAlerta({ open: true, mensagem: "Atividade salva com sucesso!", tipo: "success" });
-      reset();
-
-      setTimeout(() => navigate("/dashboard/atividades"), 2000);
+      // Redireciona de volta para a tabela após 1 segundos
+      setTimeout(() => navigate("/dashboard/atividades"), 1000);
     } catch (error: unknown) {
       console.error(error);
 
@@ -84,8 +116,16 @@ export default function FormularioAtividade() {
       setLoading(false);
     }
     // Limpa os campos após enviar
-    reset();
+    //reset();
   };
+
+  if (buscandoDados) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 5 }}>
+        <Typography color="text.secondary">Carregando dados da atividade...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", p: { xs: 2, md: 4 } }}>

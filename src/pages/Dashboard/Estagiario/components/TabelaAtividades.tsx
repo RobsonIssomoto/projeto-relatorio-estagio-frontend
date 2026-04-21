@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, IconButton, Stack } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { ptBR } from "@mui/x-data-grid/locales";
@@ -17,7 +18,7 @@ interface Atividade {
 export const TabelaAtividades = () => {
   const [atividades, setAtividades] = useState<Atividade[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const navigate = useNavigate();
   // Efeito que busca os dados no MongoDB ao abrir a tela
   useEffect(() => {
     const buscarAtividades = async () => {
@@ -82,7 +83,10 @@ export const TabelaAtividades = () => {
         headerAlign: "center",
         renderCell: (params: GridRenderCellParams) => (
           <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" height="100%">
-            <IconButton color="primary" size="small" onClick={() => console.log("Ver:", params.row._id)}>
+            <IconButton
+              color="primary"
+              size="small"
+              onClick={() => navigate(`/dashboard/atividades/editar/${params.row._id}`)}>
               <VisibilityIcon fontSize="small" />
             </IconButton>
             <IconButton color="error" size="small" onClick={() => handleDelete(params.row._id)}>

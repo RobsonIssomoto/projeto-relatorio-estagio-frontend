@@ -182,7 +182,7 @@ export const DashboardEstagiario = () => {
 
         {/* =========================================================
         O espaço abaixo já está preparado para 
-        receber os Gráficos e a Tabela de Atividades!
+        receber os Gráficos 
         =========================================================
       */}
         <Box

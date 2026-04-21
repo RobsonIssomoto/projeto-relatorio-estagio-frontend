@@ -13,7 +13,7 @@ import { Cadastro } from "./pages/Auth/Cadastro/components/Cadastro";
 // 4. Dashboard e Atividades
 import { DashboardEstagiario } from "./pages/Dashboard/Estagiario/Home/DashboardEstagiario";
 import { Atividade } from "./pages/Dashboard/Estagiario/Atividades/Atividades";
-import FormularioAtividade from "./pages/Dashboard/Estagiario/components/FormularioAtividade";
+import { TelaRegistroAtividade } from "./pages/Dashboard/Estagiario/Atividades/TelaRegistroAtividade";
 
 // 5. Componentes Globais
 import { Navbar } from "./components/Navbar/Navbar";
@@ -62,7 +62,8 @@ export default function App() {
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard/estagiario" element={<DashboardEstagiario />} />
             <Route path="/dashboard/atividades" element={<Atividade />} />
-            <Route path="/dashboard/atividades/nova" element={<FormularioAtividade />} />
+            <Route path="/dashboard/atividades/nova" element={<TelaRegistroAtividade />} />
+            <Route path="/dashboard/atividades/editar/:id" element={<TelaRegistroAtividade />} />
             <Route path="/dashboard/empresa" element={<h1>Painel Base da Empresa em construção 🚧</h1>} />
           </Route>
         </Routes>
