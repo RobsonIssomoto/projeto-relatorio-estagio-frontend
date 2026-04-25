@@ -8,7 +8,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { api } from "../../../../services/api";
 
-interface Atividade {
+interface IAtividade {
   _id: string;
   titulo: string;
   dataAtividade: string;
@@ -16,7 +16,7 @@ interface Atividade {
 }
 
 export const TabelaAtividades = () => {
-  const [atividades, setAtividades] = useState<Atividade[]>([]);
+  const [atividades, setAtividades] = useState<IAtividade[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   // Efeito que busca os dados no MongoDB ao abrir a tela

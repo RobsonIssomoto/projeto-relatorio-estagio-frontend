@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link as RouterLink } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { isAxiosError } from "axios";
 import { Box, Button, Paper, TextField, Typography, Autocomplete, Chip } from "@mui/material";
@@ -61,7 +61,7 @@ export default function FormularioAtividade() {
           console.error("Erro ao buscar atividade:", error);
           setAlerta({ open: true, mensagem: "Erro ao carregar dados da atividade", tipo: "error" });
         } finally {
-          // NOVO: Independente de dar erro ou sucesso, avisa que parou de buscar!
+          // Independente de dar erro ou sucesso, avisa que parou de buscar!
           setBuscandoDados(false);
         }
       };
@@ -82,7 +82,7 @@ export default function FormularioAtividade() {
         horas: dados.horas,
         tecnologias: dados.tecnologias,
         descricao: dados.descricao,
-        alunoId: "69e5a714881701b1b1318e8d", // Mantemos o mock por enquanto
+        alunoId: "69e5a714881701b1b1318e8d", // Manter mock por enquanto
       };
 
       // DECISÃO DO SISTEMA: Editar ou Criar?
@@ -249,7 +249,12 @@ export default function FormularioAtividade() {
               {isLoading ? "Salvando..." : "Salvar"} {/* <-- Muda o texto */}
             </Button>
 
-            <Button variant="outlined" color="inherit" sx={{ width: { xs: "100%", sm: "120px" } }}>
+            <Button
+              component={RouterLink}
+              to="/dashboard/atividades"
+              variant="outlined"
+              color="inherit"
+              sx={{ width: { xs: "100%", sm: "120px" } }}>
               Cancelar
             </Button>
           </Box>
