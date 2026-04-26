@@ -5,7 +5,7 @@ test("fazer login estagiário", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
 
-  await page.getByRole("textbox", { name: "E-mail" }).fill("robson_issomoto@fatec.com");
+  await page.getByRole("textbox", { name: "E-mail" }).fill("robson.issomoto@fatec.com");
   await page.getByRole("textbox", { name: "Senha" }).fill("Fatec@2026");
 
   await expect(page.getByRole("button", { name: "Entrar" })).toBeEnabled();

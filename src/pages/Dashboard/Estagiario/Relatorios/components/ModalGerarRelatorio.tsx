@@ -3,7 +3,7 @@ import { isAxiosError } from "axios";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Typography, Alert } from "@mui/material";
 import { api } from "../../../../../services/api";
 
-interface IModalGerarRelatorio {
+interface ModalGerarRelatorioProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void; // Função para atualizar a lista de relatórios no componente pai
@@ -11,7 +11,7 @@ interface IModalGerarRelatorio {
   alunoNome: string;
 }
 
-export const ModalGerarRelatorio = ({ open, onClose, onSuccess, alunoId, alunoNome }: IModalGerarRelatorio) => {
+export const ModalGerarRelatorio = ({ open, onClose, onSuccess, alunoId, alunoNome }: ModalGerarRelatorioProps) => {
   const [mesReferencia, setMesReferencia] = useState("");
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState({ texto: "", tipo: "success" as "success" | "error" });

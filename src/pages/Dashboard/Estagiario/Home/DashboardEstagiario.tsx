@@ -15,7 +15,7 @@ interface IAtividade {
   dataAtividade: string;
 }
 
-interface ICardMetrica {
+interface CardMetricaProps {
   titulo: string;
   valor: string | number;
   subtitulo: string;
@@ -26,7 +26,7 @@ interface ICardMetrica {
 }
 
 // COMPONENTE DO CARD
-const CardMetrica = ({ titulo, valor, subtitulo, icone, corIcone, tendencia, tipoTendencia }: ICardMetrica) => (
+const CardMetrica = ({ titulo, valor, subtitulo, icone, corIcone, tendencia, tipoTendencia }: CardMetricaProps) => (
   <Paper
     elevation={0} //  Sombra pesada removida para ficar mais "clean"
     sx={{
