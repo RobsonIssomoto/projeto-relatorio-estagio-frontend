@@ -9,13 +9,13 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
-interface AtividadeBanco {
+interface IAtividade {
   _id: string;
   horas: number;
   dataAtividade: string;
 }
 
-interface CardMetricaProps {
+interface ICardMetrica {
   titulo: string;
   valor: string | number;
   subtitulo: string;
@@ -26,7 +26,7 @@ interface CardMetricaProps {
 }
 
 // COMPONENTE DO CARD
-const CardMetrica = ({ titulo, valor, subtitulo, icone, corIcone, tendencia, tipoTendencia }: CardMetricaProps) => (
+const CardMetrica = ({ titulo, valor, subtitulo, icone, corIcone, tendencia, tipoTendencia }: ICardMetrica) => (
   <Paper
     elevation={0} //  Sombra pesada removida para ficar mais "clean"
     sx={{
@@ -88,13 +88,13 @@ export const DashboardEstagiario = () => {
         const resposta = await api.get("/api/v1/atividades/aluno/69e5a714881701b1b1318e8d");
 
         // Tipa a lista para o TS
-        const lista: AtividadeBanco[] = resposta.data;
+        const lista: IAtividade[] = resposta.data;
 
         // 1. Total de Atividades
         setTotalAtividades(lista.length);
 
         // 2. Soma de Horas
-        const somaDasHoras = lista.reduce((acumulador: number, atividade: AtividadeBanco) => {
+        const somaDasHoras = lista.reduce((acumulador: number, atividade: IAtividade) => {
           return acumulador + (atividade.horas || 0); // Prevenção caso venha vazio
         }, 0);
         setTotalHoras(somaDasHoras);

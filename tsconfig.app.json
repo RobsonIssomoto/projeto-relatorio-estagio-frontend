@@ -5,7 +5,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client"],
+    "types": ["vite/client", "node", "@playwright/test"],
     "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"] 
@@ -27,5 +27,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "src/pages/Public/Home"]
+  "include": ["src", "src/pages/Public/Home", "playwright.config.ts", "tests"]
+  
 }

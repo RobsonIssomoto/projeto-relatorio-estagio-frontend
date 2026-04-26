@@ -120,7 +120,7 @@ export const Relatorios = () => {
   );
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+    <Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
       <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 4, gap: 2 }}>
         <Box>
           <Typography variant="h5" fontWeight="bold" color="text.primary">
