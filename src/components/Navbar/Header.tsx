@@ -12,25 +12,30 @@ import {
   Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-// Ícones
 import MenuIcon from "@mui/icons-material/Menu";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 
-// A MÁGICA: O Header agora recebe funções do Layout "Pai"
 interface HeaderProps {
   onToggleMenu: () => void;
 }
 
-export default function Header({ onToggleMenu }: HeaderProps) {
+export const Header = ({ onToggleMenu }: HeaderProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const navigate = useNavigate();
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
-  const handleCloseMenu = () => setAnchorEl(null);
+  const [usuario] = useState(() => {
+    const stored = localStorage.getItem("@FatecEstagio:usuario");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      let cargo = "Estagiário";
+      if (parsed.perfil === 3) cargo = "Empresa";
+      if (parsed.perfil === 4) cargo = "Supervisor";
+      return { nome: parsed.nome || parsed.razaoSocial || "Usuário", cargo };
+    }
+    return { nome: "Usuário", cargo: "" };
+  });
 
   const handleSair = () => {
     localStorage.removeItem("@FatecEstagio:token");
@@ -38,12 +43,10 @@ export default function Header({ onToggleMenu }: HeaderProps) {
     navigate("/login");
   };
 
-  const usuario = { nome: "Robson Issomoto", cargo: "Estagiário", fotoUrl: "" };
-
   const getIniciais = (nome: string) => {
-    const pedaços = nome.split(" ");
-    if (pedaços.length === 1) return pedaços[0].charAt(0).toUpperCase();
-    return (pedaços[0].charAt(0) + pedaços[pedaços.length - 1].charAt(0)).toUpperCase();
+    const pedacos = nome.trim().split(" ");
+    if (pedacos.length === 1) return pedacos[0].charAt(0).toUpperCase();
+    return (pedacos[0].charAt(0) + pedacos[pedacos.length - 1].charAt(0)).toUpperCase();
   };
 
   return (
@@ -53,56 +56,45 @@ export default function Header({ onToggleMenu }: HeaderProps) {
       elevation={0}
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
       <Toolbar sx={{ minHeight: 64 }}>
-        {/* BOTÃO DO MENU LATERAL */}
         <IconButton onClick={onToggleMenu} edge="start" color="inherit" sx={{ mr: 2 }}>
           <MenuIcon />
         </IconButton>
-
-        <Typography variant="h6" noWrap component="div" fontWeight="bold" color="inherit">
+        <Typography variant="h6" noWrap fontWeight="bold">
           SGR
         </Typography>
-
-        {/* Joga os próximos itens pro canto direito */}
         <Box sx={{ flexGrow: 1 }} />
-
-        {/* MENU DO USUÁRIO (AVATAR) */}
-        <IconButton onClick={handleOpenMenu} size="small" sx={{ ml: 2 }}>
-          <Avatar
-            src={usuario.fotoUrl}
-            sx={{ width: 40, height: 40, bgcolor: "rgba(255,255,255,0.2)", color: "white", fontWeight: "bold" }}>
-            {!usuario.fotoUrl && getIniciais(usuario.nome)}
+        <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} size="small" sx={{ ml: 2 }}>
+          <Avatar sx={{ width: 40, height: 40, bgcolor: "rgba(255,255,255,0.2)", color: "white", fontWeight: "bold" }}>
+            {getIniciais(usuario.nome)}
           </Avatar>
         </IconButton>
-
         <Menu
           anchorEl={anchorEl}
-          open={open}
-          onClose={handleCloseMenu}
-          transformOrigin={{ horizontal: "right", vertical: "top" }}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
           PaperProps={{ elevation: 3, sx: { mt: 1.5, minWidth: 220, borderRadius: 2 } }}>
           <Box sx={{ px: 2, py: 1.5 }}>
-            <Typography variant="subtitle1" fontWeight="bold" noWrap>
+            <Typography variant="subtitle1" fontWeight="bold">
               {usuario.nome}
             </Typography>
-            <Typography variant="body2" color="text.secondary" noWrap>
+            <Typography variant="body2" color="text.secondary">
               {usuario.cargo}
             </Typography>
           </Box>
-          <Divider sx={{ mb: 1 }} />
-          <MenuItem onClick={handleCloseMenu}>
+          <Divider />
+          <MenuItem onClick={() => setAnchorEl(null)}>
             <ListItemIcon>
               <PersonIcon fontSize="small" />
             </ListItemIcon>
             Meu Perfil
           </MenuItem>
-          <MenuItem onClick={handleCloseMenu}>
+          <MenuItem onClick={() => setAnchorEl(null)}>
             <ListItemIcon>
               <SettingsIcon fontSize="small" />
             </ListItemIcon>
             Configurações
           </MenuItem>
-          <Divider sx={{ my: 1 }} />
+          <Divider />
           <MenuItem onClick={handleSair} sx={{ color: "error.main" }}>
             <ListItemIcon>
               <LogoutIcon fontSize="small" color="error" />
@@ -113,4 +105,4 @@ export default function Header({ onToggleMenu }: HeaderProps) {
       </Toolbar>
     </AppBar>
   );
-}
+};

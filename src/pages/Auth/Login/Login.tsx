@@ -39,11 +39,15 @@ export const Login = () => {
 
       console.log("Login efetuado com sucesso!", usuario);
 
-      const perfil = String(usuario.perfil).toUpperCase();
-      if (perfil === "ESTAGIARIO" || usuario.perfil === 2) {
+      // Usando o número direto é mais seguro e limpo
+      const perfil = usuario.perfil;
+
+      if (perfil === 2) {
         navigate("/dashboard/estagiario");
-      } else if (perfil === "REPRESENTANTE" || usuario.perfil === 3) {
+      } else if (perfil === 3) {
         navigate("/dashboard/empresa");
+      } else if (perfil === 4) {
+        navigate("/dashboard/supervisor"); // A nova rota do seu Seed!
       } else {
         navigate("/dashboard");
       }
