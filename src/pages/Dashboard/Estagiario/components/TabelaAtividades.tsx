@@ -23,8 +23,7 @@ export const TabelaAtividades = () => {
   useEffect(() => {
     const buscarAtividades = async () => {
       try {
-        // ID do usuário de teste (o mesmo que usamos no Postman)
-        const resposta = await api.get("/api/v1/atividades/aluno/69e5a714881701b1b1318e8d");
+        const resposta = await api.get("/api/v1/atividades/aluno");
         setAtividades(resposta.data);
       } catch (error) {
         console.error("Erro ao buscar atividades:", error);
@@ -96,7 +95,7 @@ export const TabelaAtividades = () => {
         ),
       },
     ],
-    [],
+    [navigate],
   );
 
   return (

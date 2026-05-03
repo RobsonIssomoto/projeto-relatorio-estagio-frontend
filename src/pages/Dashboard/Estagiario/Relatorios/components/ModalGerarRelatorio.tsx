@@ -7,11 +7,9 @@ interface ModalGerarRelatorioProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void; // Função para atualizar a lista de relatórios no componente pai
-  alunoId: string;
-  alunoNome: string;
 }
 
-export const ModalGerarRelatorio = ({ open, onClose, onSuccess, alunoId, alunoNome }: ModalGerarRelatorioProps) => {
+export const ModalGerarRelatorio = ({ open, onClose, onSuccess }: ModalGerarRelatorioProps) => {
   const [mesReferencia, setMesReferencia] = useState("");
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState({ texto: "", tipo: "success" as "success" | "error" });
@@ -22,8 +20,6 @@ export const ModalGerarRelatorio = ({ open, onClose, onSuccess, alunoId, alunoNo
 
     try {
       await api.post("/api/v1/relatorios", {
-        alunoId,
-        aluno: alunoNome,
         mesReferencia,
       });
 

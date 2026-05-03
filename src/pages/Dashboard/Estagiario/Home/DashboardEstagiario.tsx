@@ -85,7 +85,7 @@ export const DashboardEstagiario = () => {
   useEffect(() => {
     const calcularMetricas = async () => {
       try {
-        const resposta = await api.get("/api/v1/atividades/aluno/69e5a714881701b1b1318e8d");
+        const resposta = await api.get("/api/v1/atividades/aluno");
 
         // Tipa a lista para o TS
         const lista: IAtividade[] = resposta.data;

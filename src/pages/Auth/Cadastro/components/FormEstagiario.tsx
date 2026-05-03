@@ -39,31 +39,66 @@ export default function FormEstagiario({ setEtapa }: Props) {
 
   const onSubmit = async (dados: EstagiarioData) => {
     try {
-      console.log("Sucesso!O RHF empacotou tudo", dados);
+      console.log("Iniciando cadastro no SQL Server...");
 
+      // 1. FORMATANDO O PACOTE PARA O PRISMA (PascalCase)
       const payloadParaOBackend = {
-        nome: dados.nome,
-        cpf: dados.cpf,
-        telefone: dados.telefone,
-        email: dados.email,
-        senhaEmTextoPlano: dados.senha,
-        perfil: "ESTAGIARIO",
+        Login: dados.email, // Usando o e-mail como Login (comum em sistemas modernos)
+        Email: dados.email, // Coluna Email do SQL
+        Senha: dados.senha, // Coluna Senha (será criptografada pelo Node)
+        Nome: dados.nome,
+        CPF: dados.cpf,
+        Telefone: dados.telefone,
+        Perfil: 2, // 2 = Perfil de Estagiário no seu sistema
       };
 
-      console.log("Enviando para o Node:", payloadParaOBackend);
+      console.log("Enviando para a nova rota /usuarios:", payloadParaOBackend);
 
-      //Axios entra aqui
-      const resposta = await api.post("/api/v1/usuarios", payloadParaOBackend);
+      // 2. CHAMADA PARA A NOVA ROTA
+      // Remove o "/api/v1" pois a rota é apenas "/usuarios"
+      const resposta = await api.post("/usuarios", payloadParaOBackend);
 
-      console.log("Servidor respondeu com sucesso", resposta.data);
-      alert("Cadastro realizado com sucesso");
-      reset(); // Limpa todos os campos do formulário
-      navigate("/login"); // Direciona o usuário para a tela de login
+      console.log("Sucesso no SQL Server!", resposta.data);
+      alert("Conta de acesso criada com sucesso no SQL!");
+
+      reset(); // Limpa o formulário
+
+      navigate("/login"); // Vai para o login
     } catch (erro) {
-      console.error("Erro de requisição", erro);
-      alert("Ocorreu um erro ao cadastrar");
+      const erroAxios = erro as { response?: { data?: { erro?: string } }; message?: string };
+
+      console.error("Erro na requisição SQL:", erroAxios.response?.data || erroAxios.message);
+      alert("Erro ao cadastrar: " + (erroAxios.response?.data?.erro || "Falha na conexão"));
     }
   };
+
+  //   const onSubmit = async (dados: EstagiarioData) => {
+  //     try {
+  //     console.log("Sucesso!O RHF empacotou tudo", dados);
+
+  //     const payloadParaOBackend = {
+  //       nome: dados.nome,
+  //       cpf: dados.cpf,
+  //       telefone: dados.telefone,
+  //       email: dados.email,
+  //       senhaEmTextoPlano: dados.senha,
+  //       perfil: "ESTAGIARIO",
+  //     };
+
+  //     console.log("Enviando para o Node:", payloadParaOBackend);
+
+  //     //Axios entra aqui
+  //     const resposta = await api.post("/api/v1/usuarios", payloadParaOBackend);
+
+  //     console.log("Servidor respondeu com sucesso", resposta.data);
+  //     alert("Cadastro realizado com sucesso");
+  //     reset(); // Limpa todos os campos do formulário
+  //     navigate("/login"); // Direciona o usuário para a tela de login
+  //   } catch (erro) {
+  //     console.error("Erro de requisição", erro);
+  //     alert("Ocorreu um erro ao cadastrar");
+  //   }
+  // };
 
   const senhaAtual = useWatch({ control, name: "senha" }) || "";
   const confirmaSenhaAtual = useWatch({ control, name: "confirmarSenha" }) || "";

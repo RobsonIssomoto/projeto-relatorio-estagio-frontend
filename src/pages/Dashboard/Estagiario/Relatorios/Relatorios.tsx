@@ -12,9 +12,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { api } from "../../../../services/api";
 import { ModalGerarRelatorio } from "./components/ModalGerarRelatorio";
 
-const ALUNO_ID = "69e5a714881701b1b1318e8d";
-const ALUNO_NOME = "Estagiário Teste";
-
 // Tipagens
 interface IRelatorio {
   _id: string;
@@ -33,7 +30,7 @@ export const Relatorios = () => {
   const buscarRelatorios = async () => {
     setIsLoading(true);
     try {
-      const resposta = await api.get(`/api/v1/relatorios/aluno/${ALUNO_ID}`);
+      const resposta = await api.get("/api/v1/relatorios/aluno");
       setRelatorios(resposta.data);
     } catch (error) {
       console.error("Erro ao buscar relatórios:", error);
@@ -166,13 +163,7 @@ export const Relatorios = () => {
       </Fab>
 
       {/* O COMPONENTE */}
-      <ModalGerarRelatorio
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSuccess={buscarRelatorios}
-        alunoId={ALUNO_ID}
-        alunoNome={ALUNO_NOME}
-      />
+      <ModalGerarRelatorio open={openModal} onClose={() => setOpenModal(false)} onSuccess={buscarRelatorios} />
     </Box>
   );
 };

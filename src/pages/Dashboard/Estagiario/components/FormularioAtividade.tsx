@@ -82,7 +82,6 @@ export default function FormularioAtividade() {
         horas: dados.horas,
         tecnologias: dados.tecnologias,
         descricao: dados.descricao,
-        alunoId: "69e5a714881701b1b1318e8d", // Manter mock por enquanto
       };
 
       // DECISÃO DO SISTEMA: Editar ou Criar?

@@ -27,9 +27,9 @@ export const Login = () => {
     try {
       setErroLogin(null); // Limpa o erro ao tentar logar de novo
 
-      const resposta = await api.post("/api/v1/auth/login", {
-        email: dados.email,
-        senha: dados.senha,
+      const resposta = await api.post("/auth/login", {
+        Email: dados.email,
+        Senha: dados.senha,
       });
 
       const { token, usuario } = resposta.data;
@@ -40,7 +40,7 @@ export const Login = () => {
       console.log("Login efetuado com sucesso!", usuario);
 
       // Usando o número direto é mais seguro e limpo
-      const perfil = usuario.perfil;
+      const perfil = usuario.Perfil;
 
       if (perfil === 2) {
         navigate("/dashboard/estagiario");

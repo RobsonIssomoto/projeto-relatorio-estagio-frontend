@@ -9,10 +9,6 @@ import { api } from "@/services/api";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
-// =========================================================
-// 3. FORMULÁRIO PRINCIPAL
-// =========================================================
-
 interface Props {
   setEtapa: (etapa: "selecao" | "estagiario" | "empresa") => void;
 }
@@ -46,28 +42,35 @@ export default function FormEmpresa({ setEtapa }: Props) {
 
   const onSubmit = async (dados: EmpresaData) => {
     try {
+      console.log("Iniciando cadastro no SQL Server...");
+
       const payloadParaOBackend = {
-        razaoSocial: dados.razaoSocial,
-        cnpj: dados.cnpj,
-        responsavel: dados.nomeRepresentante,
-        telefone: dados.telefone,
-        email: dados.email,
-        senhaEmTextoPlano: dados.senha,
-        perfil: "REPRESENTANTE",
+        Login: dados.email,
+        RazaoSocial: dados.razaoSocial,
+        CNPJ: dados.cnpj,
+        Nome: dados.nomeRepresentante,
+        Telefone: dados.telefone,
+        Email: dados.email,
+        Senha: dados.senha,
+        Perfil: 3,
       };
 
-      console.log("Enviando para o Node:", payloadParaOBackend);
+      console.log("Enviando para a nova rota /usuarios:", payloadParaOBackend);
 
       // Axios entra aqui
-      const resposta = await api.post("/api/v1/usuarios", payloadParaOBackend);
+      const resposta = await api.post("/usuarios", payloadParaOBackend);
 
-      console.log("Servidor respondeu com sucesso", resposta.data);
-      alert("Cadastro realizado com sucesso");
+      console.log("Sucesso no SQL Server!", resposta.data);
+      alert("Conta de acesso criada com sucesso no SQL!");
+
       reset(); // Limpa todos os campos do formulário
+
       navigate("/login"); // Manda o usuário para a tela de login
     } catch (erro) {
-      console.error("Erro de requisição", erro);
-      alert("Ocorreu um erro ao cadastrar");
+      const erroAxios = erro as { response?: { data?: { erro?: string } }; message?: string };
+
+      console.error("Erro na requisição SQL:", erroAxios.response?.data || erroAxios.message);
+      alert("Erro ao cadastrar: " + (erroAxios.response?.data?.erro || "Falha na conexão"));
     }
   };
 
