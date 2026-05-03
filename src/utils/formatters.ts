@@ -73,3 +73,7 @@ export const validarCNPJ = (cnpj: string) => {
   if (resultado !== parseInt(digitos.charAt(1))) return false;
   return true;
 };
+
+export const removerMascara = (valor: string): string => {
+  return valor.replace(/\D/g, ""); // Remove qualquer caractere que não seja dígito
+};
