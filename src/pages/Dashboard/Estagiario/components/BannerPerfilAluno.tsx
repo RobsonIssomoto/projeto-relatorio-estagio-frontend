@@ -15,7 +15,7 @@ interface ItemDadoProps {
   valor: string | number;
   corValor?: string;
 }
-// 🛠️ MINI-COMPONENTE INTERNO: Padroniza a exibição de cada bloco de dado com um ícone
+//  Padroniza a exibição de cada bloco de dado com um ícone
 const ItemDado = ({ icone, titulo, valor, corValor = "text.primary" }: ItemDadoProps) => (
   <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
     <Box sx={{ mt: 0.5, color: "text.secondary" }}>{icone}</Box>

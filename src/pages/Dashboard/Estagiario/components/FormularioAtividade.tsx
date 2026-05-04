@@ -127,7 +127,7 @@ export default function FormularioAtividade() {
   }
 
   return (
-    <Box sx={{ maxWidth: 800, mx: "auto", p: { xs: 2, md: 4 } }}>
+    <Box sx={{ minWidth: 500, maxWidth: 800, mx: "auto", p: { xs: 2, md: 4 } }}>
       <Paper elevation={3} sx={{ p: 4, width: "100%", maxWidth: 600, mt: 4 }}>
         {/* Título com cor customizada */}
         <Typography variant="h5" color="fatec.main" gutterBottom fontWeight="bold">
@@ -140,7 +140,7 @@ export default function FormularioAtividade() {
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
-          sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
           {/* 1. Título da Atividade */}
           <TextField
             label="Título da Atividade"

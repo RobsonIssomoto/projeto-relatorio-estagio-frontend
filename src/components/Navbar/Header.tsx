@@ -82,7 +82,11 @@ export const Header = ({ onToggleMenu }: HeaderProps) => {
             </Typography>
           </Box>
           <Divider />
-          <MenuItem onClick={() => setAnchorEl(null)}>
+          <MenuItem
+            onClick={() => {
+              setAnchorEl(null);
+              navigate("/perfil");
+            }}>
             <ListItemIcon>
               <PersonIcon fontSize="small" />
             </ListItemIcon>

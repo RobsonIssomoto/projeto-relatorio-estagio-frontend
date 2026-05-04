@@ -48,8 +48,8 @@ export const TabelaAtividades = () => {
       // 3. Pede para a API deletar no MongoDB
       await api.delete(`/api/v1/atividades/${id}`);
 
-      // 4. Atualiza a tabela na hora, SEM DAR F5!
-      // Ele pega a lista atual e filtra, removendo o ID que acabamos de apagar
+      // 4. Atualiza a tabela na hora
+      // Pega a lista atual e filtra, removendo o ID
       setAtividades((listaAnterior) => listaAnterior.filter((ativ) => ativ._id !== id));
     } catch (error) {
       console.error("Erro ao deletar:", error);

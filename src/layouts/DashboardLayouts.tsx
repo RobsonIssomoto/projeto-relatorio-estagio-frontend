@@ -7,7 +7,7 @@ import { Sidebar, type MenuItemProps } from "../../src/components/Navbar/Siderba
 export const DashboardLayout = () => {
   const [menuAberto, setMenuAberto] = useState(true);
 
-  // MÁGICA AQUI: O estado já "nasce" com os itens corretos lendo o localStorage,
+  // O estado já "nasce" com os itens corretos lendo o localStorage,
   // sem precisar do useEffect. O React processa essa função apenas 1 vez.
   const [itensDoMenu] = useState<MenuItemProps[]>(() => {
     const stored = localStorage.getItem("@FatecEstagio:usuario");

@@ -13,9 +13,10 @@ import { Cadastro } from "./pages/Auth/Cadastro/components/Cadastro";
 // 4. Dashboard e Atividades
 import { DashboardEstagiario } from "./pages/Dashboard/Estagiario/Home/DashboardEstagiario";
 import { Atividade } from "./pages/Dashboard/Estagiario/Atividades/Atividades";
-import { TelaRegistroAtividade } from "./pages/Dashboard/Estagiario/Atividades/TelaRegistroAtividade";
+import { TelaRegistrarAtividade } from "./pages/Dashboard/Estagiario/Atividades/TelaRegistroAtividade";
 import { Relatorios } from "./pages/Dashboard/Estagiario/Relatorios/Relatorios";
 import { DashboardSupervisor } from "./pages/Dashboard/Supervisor/Home/DashboardSupervisor";
+import { TelaEditarPerfil } from "./pages/Dashboard/Estagiario/Perfil/TelaEditarPerfil";
 
 // 5. Componentes Globais
 import { Navbar } from "./components/Navbar/Navbar";
@@ -64,9 +65,12 @@ export default function App() {
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard/estagiario" element={<DashboardEstagiario />} />
             <Route path="/dashboard/atividades" element={<Atividade />} />
-            <Route path="/dashboard/atividades/nova" element={<TelaRegistroAtividade />} />
-            <Route path="/dashboard/atividades/editar/:id" element={<TelaRegistroAtividade />} />
+            <Route path="/dashboard/atividades/nova" element={<TelaRegistrarAtividade />} />
+            <Route path="/dashboard/atividades/editar/:id" element={<TelaRegistrarAtividade />} />
             <Route path="/dashboard/relatorios" element={<Relatorios />} />
+
+            <Route path="/perfil" element={<TelaEditarPerfil />} />
+
             <Route path="/dashboard/supervisor" element={<DashboardSupervisor />} />
 
             <Route path="/dashboard/empresa" element={<h1>Painel Base da Empresa em construção 🚧</h1>} />
