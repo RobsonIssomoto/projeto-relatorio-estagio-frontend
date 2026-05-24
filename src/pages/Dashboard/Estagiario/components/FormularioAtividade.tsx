@@ -105,7 +105,7 @@ export default function FormularioAtividade() {
 
       // TYPE GUARD: Confirma com segurança que o erro veio do Axios
       if (isAxiosError(error)) {
-        // Pega a mensagem exata que o seu Controller do Node enviou ({ erro: "..." })
+        // Pega a mensagem exata que o Controller do Node enviou ({ erro: "..." })
         mensagemErro = error.response?.data?.erro || "Erro na comunicação com o servidor.";
       }
 

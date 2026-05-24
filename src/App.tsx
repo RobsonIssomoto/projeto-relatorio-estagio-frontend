@@ -20,6 +20,7 @@ import { TelaEditarPerfil } from "./pages/Dashboard/Estagiario/Perfil/TelaEditar
 
 // 5. Componentes Globais
 import { Navbar } from "./components/Navbar/Navbar";
+import { AuthProvider } from "./contexts/AuthContext";
 /**
  * Esse é o "Molde" para as páginas públicas (Login e Cadastro).
  * Ele mantém as configurações de espaçamento e centralização
@@ -49,33 +50,35 @@ export default function App() {
       <CssBaseline />
 
       <BrowserRouter>
-        <Routes>
-          {/* ========================================== */}
-          {/* ROTAS PÚBLICAS (Com Navbar e Centralização) */}
-          {/* ========================================== */}
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/cadastro" element={<Cadastro />} />
-          </Route>
+        <AuthProvider>
+          <Routes>
+            {/* ========================================== */}
+            {/* ROTAS PÚBLICAS (Com Navbar e Centralização) */}
+            {/* ========================================== */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/cadastro" element={<Cadastro />} />
+            </Route>
 
-          {/* ========================================== */}
-          {/* ROTAS PRIVADAS (Com Menu Lateral / Sidebar) */}
-          {/* ========================================== */}
-          <Route element={<DashboardLayout />}>
-            <Route path="/dashboard/estagiario" element={<DashboardEstagiario />} />
-            <Route path="/dashboard/atividades" element={<Atividade />} />
-            <Route path="/dashboard/atividades/nova" element={<TelaRegistrarAtividade />} />
-            <Route path="/dashboard/atividades/editar/:id" element={<TelaRegistrarAtividade />} />
-            <Route path="/dashboard/relatorios" element={<Relatorios />} />
+            {/* ========================================== */}
+            {/* ROTAS PRIVADAS (Com Menu Lateral / Sidebar) */}
+            {/* ========================================== */}
+            <Route element={<DashboardLayout />}>
+              <Route path="/dashboard/estagiario" element={<DashboardEstagiario />} />
+              <Route path="/dashboard/atividades" element={<Atividade />} />
+              <Route path="/dashboard/atividades/nova" element={<TelaRegistrarAtividade />} />
+              <Route path="/dashboard/atividades/editar/:id" element={<TelaRegistrarAtividade />} />
+              <Route path="/dashboard/relatorios" element={<Relatorios />} />
 
-            <Route path="/perfil" element={<TelaEditarPerfil />} />
+              <Route path="/perfil" element={<TelaEditarPerfil />} />
 
-            <Route path="/dashboard/supervisor" element={<DashboardSupervisor />} />
+              <Route path="/dashboard/supervisor" element={<DashboardSupervisor />} />
 
-            <Route path="/dashboard/empresa" element={<h1>Painel Base da Empresa em construção 🚧</h1>} />
-          </Route>
-        </Routes>
+              <Route path="/dashboard/empresa" element={<h1>Painel Base da Empresa em construção 🚧</h1>} />
+            </Route>
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
   );

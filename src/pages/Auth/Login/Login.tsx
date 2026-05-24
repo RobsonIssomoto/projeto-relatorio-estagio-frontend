@@ -6,6 +6,8 @@ import { api } from "@/services/api";
 // Componentes do Material UI
 import { Container, Box, Typography, TextField, Button, Paper, Alert } from "@mui/material";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { isAxiosError } from "axios";
 
 interface LoginData {
   email: string;
@@ -23,6 +25,8 @@ export const Login = () => {
   // Estado para controlar mensagens de erro na tela
   const [erroLogin, setErroLogin] = useState<string | null>(null);
 
+  const { login } = useAuth();
+
   const onSubmit = async (dados: LoginData) => {
     try {
       setErroLogin(null); // Limpa o erro ao tentar logar de novo
@@ -34,8 +38,10 @@ export const Login = () => {
 
       const { token, usuario } = resposta.data;
 
-      localStorage.setItem("@FatecEstagio:token", token);
-      localStorage.setItem("@FatecEstagio:usuario", JSON.stringify(usuario));
+      login(token, usuario);
+
+      console.log("Login efetuado com sucesso!", usuario);
+      navigate("/dashboard");
 
       console.log("Login efetuado com sucesso!", usuario);
 
@@ -51,9 +57,13 @@ export const Login = () => {
       } else {
         navigate("/dashboard");
       }
-    } catch (erro) {
-      console.error("Erro ao logar:", erro);
-      setErroLogin("E-mail ou senha incorretos. Verifique e tente novamente.");
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      if (isAxiosError(error) && error.response) {
+        setErroLogin(error.response.data?.erro || "E-mail ou senha incorretos.");
+      } else {
+        setErroLogin("Erro de conexão com o servidor. Tente novamente.");
+      }
     }
   };
 

@@ -1,4 +1,4 @@
-// Exportamos a lista para qualquer arquivo do projeto poder usar
+// Exporta a lista para qualquer arquivo do projeto poder usar
 export const NAV_ITEMS = ["Início", "Sobre", "Contato"];
 
 // Dica pro futuro: Quando for usar o React Router, você pode mudar para algo assim:

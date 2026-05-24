@@ -1,32 +1,30 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Box, CssBaseline, Toolbar } from "@mui/material";
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate } from "react-router-dom";
 import { Header } from "../components/Navbar/Header";
 import { Sidebar, type MenuItemProps } from "../../src/components/Navbar/Siderbar";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const DashboardLayout = () => {
   const [menuAberto, setMenuAberto] = useState(true);
+  const { usuario, logado } = useAuth();
 
   // O estado já "nasce" com os itens corretos lendo o localStorage,
   // sem precisar do useEffect. O React processa essa função apenas 1 vez.
-  const [itensDoMenu] = useState<MenuItemProps[]>(() => {
-    const stored = localStorage.getItem("@FatecEstagio:usuario");
+  const itensDoMenu = useMemo<MenuItemProps[]>(() => {
+    const perfil = usuario?.perfil || usuario?.Perfil;
 
-    if (stored) {
-      const user = JSON.parse(stored);
-
-      // Menu do Supervisor (Perfil 4)
-      if (user.perfil === 4) {
-        return [
-          { texto: "Início", icone: "Home", rota: "/dashboard/supervisor" },
-          { texto: "Estagiários", icone: "People", rota: "/dashboard/supervisor/estagiarios" },
-          { texto: "Relatórios", icone: "FactCheck", rota: "/dashboard/supervisor/relatorios" },
-          { texto: "Histórico", icone: "History", rota: "/dashboard/supervisor/historico" },
-        ];
-      }
-
-      // Se futuramente quiser colocar o da Empresa (Perfil 3), é só adicionar um 'else if' aqui
+    // Menu do Supervisor (Perfil 4)
+    if (perfil === 4) {
+      return [
+        { texto: "Início", icone: "Home", rota: "/dashboard/supervisor" },
+        { texto: "Estagiários", icone: "People", rota: "/dashboard/supervisor/estagiarios" },
+        { texto: "Relatórios", icone: "FactCheck", rota: "/dashboard/supervisor/relatorios" },
+        { texto: "Histórico", icone: "History", rota: "/dashboard/supervisor/historico" },
+      ];
     }
+
+    // Se futuramente quiser colocar o da Empresa (Perfil 3), é só adicionar um 'else if' aqui
 
     // Menu Padrão / Estagiário (Perfil 2)
     return [
@@ -34,8 +32,11 @@ export const DashboardLayout = () => {
       { texto: "Atividades", icone: "Assignment", rota: "/dashboard/atividades" },
       { texto: "Relatórios", icone: "Description", rota: "/dashboard/relatorios" },
     ];
-  });
+  }, [usuario]);
 
+  if (!logado) {
+    return <Navigate to="/login" replace />;
+  }
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
