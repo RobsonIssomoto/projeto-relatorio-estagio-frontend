@@ -3,10 +3,15 @@ import { Box, Typography, Button, Stack, Fab, IconButton, Chip, Tooltip } from "
 import { DataGrid } from "@mui/x-data-grid";
 import { ptBR } from "@mui/x-data-grid/locales";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { RelatorioFatecPDF } from "./components/RelatorioPDF";
+import { useAuth } from "../../../../contexts/AuthContext"; // Para pegarmos o nome do aluno logado
+import DownloadIcon from "@mui/icons-material/GetApp"; // Ícone amigável de download do MUI
 
 // Ícones do Material UI
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 
 // API e o componente isolado
 import { api } from "../../../../services/api";
@@ -26,6 +31,8 @@ export const Relatorios = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [loadingTable, setLoadingTable] = useState(false);
+
+  const { usuario } = useAuth();
 
   const buscarRelatorios = async () => {
     setIsLoading(true);
@@ -62,7 +69,7 @@ export const Relatorios = () => {
     }
   };
 
-  // Suas colunas originais
+  // Colunas
   const columns: GridColDef[] = useMemo(
     () => [
       { field: "mesReferencia", headerName: "Mês", minWidth: 150, flex: 1 },
@@ -100,22 +107,46 @@ export const Relatorios = () => {
       {
         field: "acoes",
         headerName: "Ações",
-        width: 120,
+        width: 150, // 💡 Aumentei um pouquinho para caber os 2 botões
         sortable: false,
         align: "center",
         headerAlign: "center",
-        renderCell: (params: GridRenderCellParams) => (
-          <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" height="100%">
-            <IconButton color="error" size="small" onClick={() => handleDeleteRelatorio(params.row._id)}>
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </Stack>
-        ),
+        renderCell: (params: GridRenderCellParams) => {
+          const relatorioDaLinha = params.row;
+
+          return (
+            <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" height="100%">
+              {/* 1. BOTÃO DE DOWNLOAD DO PDF */}
+              <PDFDownloadLink
+                document={
+                  <RelatorioFatecPDF dadosRelatorio={relatorioDaLinha} usuarioNome={usuario?.nome || "Estagiário"} />
+                }
+                fileName={`Relatorio_${relatorioDaLinha.mesReferencia.replace(" / ", "_")}.pdf`}
+                style={{ textDecoration: "none" }}>
+                {({ loading }) => (
+                  <Tooltip title={loading ? "Preparando..." : "Baixar Relatório"}>
+                    <span>
+                      <IconButton color="primary" disabled={loading} size="small">
+                        <PictureAsPdfIcon fontSize="small" />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                )}
+              </PDFDownloadLink>
+
+              {/* 2. BOTÃO DE DELETAR (O SEU ORIGINAL) */}
+              <IconButton color="error" size="small" onClick={() => handleDeleteRelatorio(relatorioDaLinha._id)}>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Stack>
+          );
+        },
       },
     ],
-    [],
+    // 🚨 A SOLUÇÃO DO ERRO ESTÁ AQUI:
+    // O React exige saber de onde vem o 'usuario' e a 'handleDeleteRelatorio'
+    [usuario, handleDeleteRelatorio],
   );
-
   return (
     <Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
       <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 4, gap: 2 }}>
