@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Box, Typography, Paper, Avatar, Stack } from "@mui/material";
 import { api } from "../../../../services/api";
+import { GraficoHoras } from "../Atividades/GraficoHoras";
+
 // Ícones
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
@@ -13,6 +15,7 @@ interface IAtividade {
   _id: string;
   horas: number;
   dataAtividade: string;
+  tecnologias?: string[];
 }
 
 interface CardMetricaProps {
@@ -81,6 +84,7 @@ export const DashboardEstagiario = () => {
   const [totalHoras, setTotalHoras] = useState(0);
   const [totalAtividades, setTotalAtividades] = useState(0);
   const [atividadesRecentes, setAtividadesRecentes] = useState(0);
+  const [dadosGrafico, setDadosGrafico] = useState<{ nome: string; valor: number }[]>([]);
   // 2. Busca os dados no banco assim que o Dashboard abre
   useEffect(() => {
     const calcularMetricas = async () => {
@@ -108,6 +112,29 @@ export const DashboardEstagiario = () => {
           return dataDaAtividade >= dataLimite;
         });
         setAtividadesRecentes(feitasRecentemente.length);
+
+        // 4. LÓGICA DO GRÁFICO: Contar as tecnologias utilizadas
+        const contagemTechs: Record<string, number> = {};
+
+        lista.forEach((ativ) => {
+          if (ativ.tecnologias && Array.isArray(ativ.tecnologias)) {
+            ativ.tecnologias.forEach((tech) => {
+              contagemTechs[tech] = (contagemTechs[tech] || 0) + 1;
+            });
+          }
+        });
+
+        // Transforma o objeto { HTML: 1, CSS: 1 } no formato que o Recharts pede
+        // Formata para o Recharts (BLINDADO CONTRA ERROS NaN)
+        const dadosFormatados = Object.keys(contagemTechs)
+          .map((key) => ({
+            nome: key,
+            valor: Number(contagemTechs[key]), // Força a ser número (Number)
+          }))
+          .filter((item) => item.valor > 0); // Remove qualquer um que seja 0
+
+        console.log("DADOS PARA O GRÁFICO:", dadosFormatados);
+        setDadosGrafico(dadosFormatados);
       } catch (error) {
         console.error("Erro ao calcular métricas:", error);
       }
@@ -188,14 +215,13 @@ export const DashboardEstagiario = () => {
         <Box
           sx={{
             mt: 3,
-            height: "300px",
-            border: "2px dashed #ccc",
-            borderRadius: 2,
+            width: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}>
-          <Typography color="text.secondary">Área reservada para o Gráfico / Tabela</Typography>
+          {/* Aqui entra o seu gráfico do Recharts! */}
+          <GraficoHoras dados={dadosGrafico} />
         </Box>
       </Stack>
     </Box>

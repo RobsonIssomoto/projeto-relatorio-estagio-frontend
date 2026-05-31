@@ -16,6 +16,7 @@ import { Atividade } from "./pages/Dashboard/Estagiario/Atividades/Atividades";
 import { TelaRegistrarAtividade } from "./pages/Dashboard/Estagiario/Atividades/TelaRegistroAtividade";
 import { Relatorios } from "./pages/Dashboard/Estagiario/Relatorios/Relatorios";
 import { DashboardSupervisor } from "./pages/Dashboard/Supervisor/Home/DashboardSupervisor";
+import { RelatoriosSupervisor } from "./pages/Dashboard/Supervisor/Relatorios/RelatoriosSupervisor";
 import { TelaEditarPerfil } from "./pages/Dashboard/Estagiario/Perfil/TelaEditarPerfil";
 
 // 5. Componentes Globais
@@ -76,6 +77,8 @@ export default function App() {
               <Route path="/dashboard/supervisor" element={<DashboardSupervisor />} />
 
               <Route path="/dashboard/empresa" element={<h1>Painel Base da Empresa em construção 🚧</h1>} />
+
+              <Route path="/dashboard/supervisor/relatorios" element={<RelatoriosSupervisor />} />
             </Route>
           </Routes>
         </AuthProvider>

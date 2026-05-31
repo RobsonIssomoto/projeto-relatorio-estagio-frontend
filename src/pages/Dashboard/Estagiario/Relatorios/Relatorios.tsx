@@ -6,7 +6,6 @@ import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { RelatorioFatecPDF } from "./components/RelatorioPDF";
 import { useAuth } from "../../../../contexts/AuthContext"; // Para pegarmos o nome do aluno logado
-import DownloadIcon from "@mui/icons-material/GetApp"; // Ícone amigável de download do MUI
 
 // Ícones do Material UI
 import AddIcon from "@mui/icons-material/Add";
