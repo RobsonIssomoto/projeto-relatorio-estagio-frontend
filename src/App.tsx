@@ -11,6 +11,7 @@ import { Login } from "./pages/Auth/Login/Login";
 import { Cadastro } from "./pages/Auth/Cadastro/components/Cadastro";
 
 // 4. Dashboard e Atividades
+import Home from "./pages/Home/Home";
 import { DashboardEstagiario } from "./pages/Dashboard/Estagiario/Home/DashboardEstagiario";
 import { Atividade } from "./pages/Dashboard/Estagiario/Atividades/Atividades";
 import { TelaRegistrarAtividade } from "./pages/Dashboard/Estagiario/Atividades/TelaRegistroAtividade";
@@ -57,6 +58,7 @@ export default function App() {
             {/* ROTAS PÚBLICAS (Com Navbar e Centralização) */}
             {/* ========================================== */}
             <Route element={<PublicLayout />}>
+              <Route path="/home" element={<Home />} />
               <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
               <Route path="/cadastro" element={<Cadastro />} />

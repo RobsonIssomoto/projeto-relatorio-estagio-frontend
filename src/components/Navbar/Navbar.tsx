@@ -87,18 +87,20 @@ export const Navbar = () => {
               }}>
               {NAV_ITEMS.map((item) => (
                 <Button
-                  key={item}
+                  key={item.label} // Alterado para item.label
+                  component={RouterLink} // Transforma o botão do MUI num link do React Router
+                  to={item.path} // Aponta para a rota correta
                   sx={{
-                    color: "fatec.contrastText", // Usa o texto branco do tema
+                    color: "fatec.contrastText",
                     px: 3,
                     borderRadius: 2,
-                    textTransform: "none", // Deixa o texto natural em vez de TUDO EM MAIÚSCULAS
+                    textTransform: "none",
                     fontSize: "1rem",
                     "&:hover": {
-                      backgroundColor: "fatec.dark", // Usa o vermelho escuro no hover
+                      backgroundColor: "fatec.dark",
                     },
                   }}>
-                  {item}
+                  {item.label} {/* Exibe o texto do botão */}
                 </Button>
               ))}
             </Box>
